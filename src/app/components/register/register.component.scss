@@ -1,0 +1,38 @@
+body {
+  background-color: #00BCD4;
+}
+
+.register-modal {
+  top: 400px;
+  margin: 0 auto;
+  width: 600px;
+
+  .register-form {
+    display: flex;
+
+    .register-form-fields {
+      flex: 1;
+      margin-right: 50px
+    }
+
+    .register-media-buttons {
+      margin-top: 80px;
+      flex: 1;
+      text-align: center;
+
+      > * {
+        margin-top: 20px;
+        margin-bottom: 20px;
+      }
+    }
+  }
+
+  .facebook-button {
+    background-color: #33c9dc;
+    color: #fff;
+  }
+
+  .mat-form-field-infix {
+    width: 350px;
+  }
+}
