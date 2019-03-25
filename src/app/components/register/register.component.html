@@ -1,7 +1,23 @@
 <div class="register-page">
   <mat-card class="register-modal">
-    <h1>Sign up to become a bookie.</h1>
-    <form class="register-form">
+    <div fxLayout="row" fxLayoutGap="90px">
+      <h1>Sign up to become a bookie.</h1>
+      <img
+        class="book-icon"
+        alt="Book Icon"
+        height="100px"
+        src="../../../assets/images/book.png"
+        width="100px"
+      />
+    </div>
+    <form
+      fxLayout="row"
+      fxLayoutGap="50px"
+      fxLayout.xs="column"
+      fxLayoutWrap
+      fxLayoutAlign="center center"
+      class="register-form"
+    >
       <div class="register-form-fields">
         <div *ngFor="let input of formInputs">
           <mat-form-field>
@@ -14,7 +30,7 @@
           </mat-form-field>
         </div>
       </div>
-      <div class="register-media-buttons">
+      <div fxLayout="column" class="register-media-buttons">
         <button mat-raised-button class="facebook-button">
           <img
             src="assets/svg/facebook.svg"
