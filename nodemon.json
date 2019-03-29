@@ -1,0 +1,6 @@
+{
+  "watch": ["./server/src"],
+  "ext": "ts",
+  "ignore": ["./server/src/**/*.spec.ts", ".git", "node_modules"],
+  "exec": "npm run serve"
+}
