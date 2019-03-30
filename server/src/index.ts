@@ -35,7 +35,10 @@ mongoose.connect('mongodb+srv://john-nguyen:august18@bookie-cluster-sex1j' +
 '.mongodb.net/test?retryWrites=true');
 mongoose.set('debug', true);
 
-import './models/Users';
+import './models/User';
+import './config/passport';
+import routes from './routes';
+app.use(routes);
 
 // Error handlers & middlewares
 if (!isProduction) {
