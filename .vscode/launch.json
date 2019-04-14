@@ -6,9 +6,37 @@
   "configurations": [
     {
       "type": "node",
+      "request": "launch",
+      "name": "Launch via NPM",
+      "useWSL": true,
+      "runtimeExecutable": "npm",
+      "localRoot": "${workspaceFolder}",
+      "remoteRoot": "{command:extension.vscode-wsl-workspaceFolder}",
+      "runtimeArgs": [
+        "run-script",
+        "serve"
+      ],
+      "internalConsoleOptions": "openOnSessionStart",
+      "skipFiles": [
+        "<node_internals>/**/*.js",
+      ],
+      "port": 5858
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "nodemon",
+      "runtimeExecutable": "nodemon",
+      "program": "${workspaceFolder}/app.js",
+      "restart": true,
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    },
+    {
+      "type": "node",
       "request": "attach",
       "name": "Attach",
-      "port": 5858
+      "port": 5858,
     },
     {
       "type": "node",
@@ -18,7 +46,7 @@
       "preLaunchTask": "tsc: build - tsconfig.json",
       "outFiles": [
         "${workspaceFolder}/dist/out-tsc/**/*.js"
-      ]
-    }
+      ],
+    },
   ]
 }

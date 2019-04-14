@@ -31,7 +31,7 @@ if (!isProduction) {
 }
 
 // Configure Mongoose
-mongoose.connect('mongodb+srv://john-nguyen:august18@bookie-cluster-sex1j' +
+mongoose.connect('mongodb+srv://john-nguyen:august18@foodie-cluster-sex1j' +
 '.mongodb.net/test?retryWrites=true');
 mongoose.set('debug', true);
 
