@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { RegisterFormInput } from '../../shared/models';
+import { FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-register',
@@ -8,6 +9,9 @@ import { RegisterFormInput } from '../../shared/models';
   encapsulation: ViewEncapsulation.None,
 })
 export class RegisterComponent implements OnInit {
+  constructor(
+    private formBuilder: FormBuilder
+  ) { }
 
   formInputs: Array<RegisterFormInput> = [
     {
@@ -30,14 +34,17 @@ export class RegisterComponent implements OnInit {
       type: 'password',
       placeholder: 'Retype Password'
     },
-    {
-      name: 'school',
-      type: 'text',
-      placeholder: 'School',
-    }
   ];
 
-  constructor() { }
+  registrationForm = this.formBuilder.group(
+    {
+      name: [''],
+      email: [''],
+      username: [''],
+      password: [''],
+      retypePassword: [''],
+    }
+  );
 
   ngOnInit() {
   }

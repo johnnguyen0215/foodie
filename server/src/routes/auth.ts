@@ -11,7 +11,7 @@ const getTokenFromHeaders = (req) => {
     const authorizationParts = authorization.split(' ');
 
     if (authorizationParts[0].toLowerCase() === 'token') {
-      return authorization[1];
+      return authorizationParts[1];
     }
   }
 
