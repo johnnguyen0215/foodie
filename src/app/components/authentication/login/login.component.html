@@ -1,0 +1,7 @@
+<div class="login-page auth-page">
+  <mat-card class="auth-modal">
+    <h1>Login.</h1>
+    <app-auth-form [formInputs]="formInputs" (formEmitter)="login($event)">
+    </app-auth-form>
+  </mat-card>
+</div>

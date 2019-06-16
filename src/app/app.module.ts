@@ -4,36 +4,42 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material.module';
 
 import { AppComponent } from './app.component';
-import { RegisterComponent } from './components/register/register.component';
-import { LoginComponent } from './components/login/login.component';
-
 import { FlexLayoutModule } from '@angular/flex-layout';
 
-import { RouterModule, Routes } from '@angular/router';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { HomeComponent } from './components/home/home.component';
+import { ProfileComponent } from './components/profile/profile.component';
 
-const routes: Routes = [
-  {
-    path: 'register',
-    component: RegisterComponent,
-  },
-  {
-    path: 'login',
-    component: LoginComponent,
-  },
-];
+import { AppRoutingModule } from './app-routing.module';
+import {
+  LoginComponent,
+} from './components/authentication/login/login.component';
+import {
+  RegisterComponent,
+} from './components/authentication/register/register.component';
+import {
+  AuthFormComponent
+} from './components/authentication/auth-form/auth-form.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    RegisterComponent,
+    HomeComponent,
+    ProfileComponent,
+    AuthFormComponent,
     LoginComponent,
+    RegisterComponent,
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     MaterialModule,
-    RouterModule.forRoot(routes),
     FlexLayoutModule,
+    FormsModule,
+    ReactiveFormsModule,
+    HttpClientModule,
+    AppRoutingModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

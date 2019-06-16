@@ -1,0 +1,30 @@
+@import '../../../../shared/styles/colors.scss';
+
+.auth-form-container {
+  .auth-form {
+    .auth-media-buttons {
+      text-align: center;
+
+      > * {
+        margin-top: 20px;
+        margin-bottom: 20px;
+      }
+    }
+  }
+
+  .facebook-button {
+    background-color: $scooter;
+    color: #fff;
+  }
+
+  .submit-button {
+    display: block;
+    margin: 20px auto 0 auto;
+    background-color: $emerald;
+    color: #fff;
+  }
+
+  .mat-form-field-infix {
+    width: 350px;
+  }
+}

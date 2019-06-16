@@ -13,6 +13,7 @@ export interface IUserModel extends IUser, Document {
 
 export const UserSchema: Schema = new Schema({
   createdAt: Date,
+  name: String,
   email: String,
   hash: String,
   salt: String,
@@ -55,6 +56,7 @@ UserSchema.methods.generateJWT = function () {
   expirationDate.setDate(today.getDate() + 60);
 
   return jwt.sign({
+    name: this.name,
     email: this.email,
     id: this._id,
     exp: expirationDate.getTime() / 1000,
@@ -64,6 +66,7 @@ UserSchema.methods.generateJWT = function () {
 UserSchema.methods.toAuthJSON = function (): AuthObject {
   return {
     _id: this._id,
+    name: this.name,
     email: this.email,
     token: this.generateJWT(),
   };

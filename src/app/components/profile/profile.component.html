@@ -1,0 +1,7 @@
+<div class="profile-page">
+  <div class="profile-picture">
+    <img src="profilePicture" />
+  </div>
+  <div class="set-profile-picture" *ngIf="profilePicUrl; else changeProfilePic"></div>
+  <div #changeProfilePic class="set-profile-picture"></div>
+</div>

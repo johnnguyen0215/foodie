@@ -4,11 +4,12 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start:ssl": "ng serve --ssl",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "serve": "node --inspect=5858 -r ts-node/register ./server/src/index.ts",
+    "serve": "SET NODE_ENV=dev & node --inspect=5858 -r ts-node/register ./server/src/index.ts",
     "serve:watch": "nodemon"
   },
   "private": true,

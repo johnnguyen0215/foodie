@@ -1,6 +1,8 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { RegisterFormInput } from '../../shared/models';
+import { FormInput } from '../../../shared/models';
 import { FormBuilder } from '@angular/forms';
+import { ApiService } from '../../../services/api.service';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -10,13 +12,16 @@ import { FormBuilder } from '@angular/forms';
 })
 export class RegisterComponent implements OnInit {
   constructor(
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private apiService: ApiService,
+    private router: Router,
+    private route: ActivatedRoute,
   ) { }
 
-  formInputs: Array<RegisterFormInput> = [
+  formInputs: Array<FormInput> = [
     {
-      name: 'username',
-      placeholder: 'Username',
+      name: 'name',
+      placeholder: 'Name (First, Last)',
       type: 'text',
     },
     {
@@ -30,22 +35,27 @@ export class RegisterComponent implements OnInit {
       placeholder: 'Password',
     },
     {
-      name: 'password',
+      name: 'retypePassword',
       type: 'password',
       placeholder: 'Retype Password'
     },
   ];
 
-  registrationForm = this.formBuilder.group(
-    {
-      name: [''],
-      email: [''],
-      username: [''],
-      password: [''],
-      retypePassword: [''],
-    }
-  );
-
   ngOnInit() {
+  }
+
+
+  register(event) {
+    const {
+      name,
+      email,
+      password
+    } = event;
+
+    this.apiService.signUp(name, email, password).subscribe(
+      (data) => {
+        this.router.navigate(['/home']);
+      }
+    );
   }
 }

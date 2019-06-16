@@ -1,1 +1,1 @@
-export * from './register-form-input.model';
+export * from './form-input.model';

@@ -2,7 +2,7 @@ import { Model, model } from 'mongoose';
 import passport = require('passport');
 import express = require('express');
 import auth from '../auth';
-import { IUserModel, UserSchema } from '../../models/User';
+import { IUserModel } from '../../models/User';
 
 const User: Model<IUserModel> = model('User');
 
@@ -15,6 +15,14 @@ router.post('/', auth.optional, (req, res, next) => {
       user
     }
   } = req;
+
+  if (!user.name) {
+    return res.status(422).json({
+      errors: {
+        name: 'is required',
+      }
+    });
+  }
 
   if (!user.email) {
     return res.status(422).json({

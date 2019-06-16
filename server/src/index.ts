@@ -5,6 +5,8 @@ import session = require('express-session');
 import cors = require('cors');
 import mongoose = require('mongoose');
 import errorHandler = require('errorhandler');
+import https = require('https');
+import fs = require('fs');
 
 // Configure isProduction variable
 const isProduction = process.env.NODE_ENV === 'production';
@@ -38,6 +40,7 @@ mongoose.set('debug', true);
 import './models/User';
 import './config/passport';
 import routes from './routes';
+import { environment } from 'src/environments/environment';
 app.use(routes);
 
 // Error handlers & middlewares
@@ -65,4 +68,14 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(8000, () => console.log('Server running on http://localhost:8000/'));
+if (!isProduction) {
+  https.createServer({
+    key: fs.readFileSync('server.key'),
+    cert: fs.readFileSync('server.cert'),
+  }, app)
+  .listen(8000, () => console.log('Server running on https://localhost:8000/'));
+} else {
+  app.listen(8000, () => {
+    console.log('Server running on http://localhost:8000/');
+  });
+}

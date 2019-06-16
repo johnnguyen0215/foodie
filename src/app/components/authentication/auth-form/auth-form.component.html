@@ -1,0 +1,47 @@
+<div class="auth-form-container">
+  <form
+    fxLayout="row"
+    fxLayoutGap="50px"
+    fxLayout.xs="column"
+    fxLayoutWrap
+    fxLayoutAlign="center center"
+    class="auth-form"
+    [formGroup]="authForm"
+    (ngSubmit)="submitForm()"
+  >
+    <div class="auth-form-fields">
+      <div *ngFor="let input of formInputs">
+        <mat-form-field>
+          <input
+            matInput
+            type="{{input.type}}"
+            name="{{input.name}}"
+            placeholder="{{input.placeholder}}"
+            formControlName="{{input.name}}"
+          >
+        </mat-form-field>
+      </div>
+    </div>
+    <div fxLayout="column" class="auth-media-buttons">
+      <button mat-raised-button class="facebook-button">
+        <img
+          src="assets/svg/facebook.svg"
+          width="30px"
+          height="30px"
+        >
+        Login with facebook
+      </button>
+      <button mat-raised-button color="accent">
+        <img
+          src="assets/svg/google-plus.svg"
+          width="30px"
+          height="30px"
+        >
+        Login with Google+
+      </button>
+    </div>
+  </form>
+  <button mat-raised-button class="submit-button" (click)="submitForm()">
+    Submit
+  </button>
+</div>

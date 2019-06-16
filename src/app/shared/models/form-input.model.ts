@@ -1,4 +1,4 @@
-export class RegisterFormInput {
+export class FormInput {
   name: string;
   placeholder: string;
   type: string;
