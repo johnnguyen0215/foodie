@@ -12,7 +12,7 @@ export class ApiService {
   ) { }
 
   // TODO: Figure out production environment url.
-  apiUrl: string = environment.production ? '' : 'http://localhost:8000/api';
+  apiUrl: string = environment.production ? '' : 'https://localhost:8000/api';
 
   signUp (name: string, email: string, password: string) {
     const payload = {

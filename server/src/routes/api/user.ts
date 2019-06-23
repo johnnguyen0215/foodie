@@ -95,6 +95,17 @@ router.post('/login', auth.optional, (req, res, next) => {
   )(req, res, next);
 });
 
+router.get('/facebook', auth.optional, (req, res, next) => {
+  return passport.authenticate('facebook');
+});
+
+router.get('facebook/callback', auth.optional, (req, res, next) => {
+  passport.authenticate('facebook', {
+    successRedirect: '/',
+    failureRedirect: '/login'
+  });
+});
+
 // GET current route (required, only authenticated users have access)
 router.get('/current', auth.required, (req, res, next) => {
   const {
@@ -112,5 +123,7 @@ router.get('/current', auth.required, (req, res, next) => {
       return res.json({ user: user.toAuthJSON() });
     });
 });
+
+
 
 export default router;

@@ -4,6 +4,7 @@ import jwt = require('jsonwebtoken');
 import { IUser } from '../interfaces/user';
 import { AuthObject } from '../interfaces/authObject';
 
+
 export interface IUserModel extends IUser, Document {
   setPassword(password: string): void;
   validatePassword(password: string): boolean;
