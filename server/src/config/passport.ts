@@ -13,6 +13,8 @@ passport.use(new LocalStrategy({
   passwordField: 'user[password]',
 },
 async (email, password, done) => {
+  console.log('executing local strategy');
+
   try {
     const user: any = await User.findOne(
       {
@@ -31,10 +33,9 @@ async (email, password, done) => {
         }
       );
     }
-
-    return done(null, user);
   } catch (e) {
-    done(
+
+    return done(
       null,
       false,
       {
@@ -55,6 +56,8 @@ passport.use(new FacebookStrategy({
   callbackURL: authConfig.facebookAuth.callbackURL,
 },
 async (accessToken, refreshToken, profile, done) => {
+  console.log('executing facebook strategy');
+
   try {
     const user = await User.findOneAndUpdate(
       {
@@ -83,7 +86,7 @@ async (accessToken, refreshToken, profile, done) => {
             'unknown-error': 'There was a problem accessing your account.'
           }
         }
-      )
+      );
     }
 
   } catch (e) {
@@ -101,3 +104,14 @@ async (accessToken, refreshToken, profile, done) => {
 
   return done();
 }));
+
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser((id, done) => {
+  User.findById(id, (err, user) => {
+    done(err, user);
+  });
+});

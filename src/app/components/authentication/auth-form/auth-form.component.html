@@ -1,4 +1,4 @@
-<div class="auth-form-container">
+  <div class="auth-form-container">
   <form
     fxLayout="row"
     fxLayoutGap="50px"
@@ -7,7 +7,6 @@
     fxLayoutAlign="center center"
     class="auth-form"
     [formGroup]="authForm"
-    (ngSubmit)="submitForm()"
   >
     <div class="auth-form-fields">
       <div *ngFor="let input of formInputs">
@@ -23,7 +22,10 @@
       </div>
     </div>
     <div fxLayout="column" class="auth-media-buttons">
-      <button mat-raised-button class="facebook-button">
+      <button
+        mat-raised-button class="facebook-button"
+        (click)="facebookLogin()"
+      >
         <img
           src="assets/svg/facebook.svg"
           width="30px"

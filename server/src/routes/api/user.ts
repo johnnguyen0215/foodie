@@ -79,7 +79,11 @@ router.post('/login', auth.optional, (req, res, next) => {
     'local',
     { session: false },
     (err, passportUser: IUserModel, info) => {
+      console.log(passportUser);
+
       if (err) {
+        console.log('error');
+
         return next(err);
       }
 
@@ -90,21 +94,17 @@ router.post('/login', auth.optional, (req, res, next) => {
         return res.json({ user: userObject.toAuthJSON() });
       }
 
-      return res.status(400);
+      return res.status(400).send('User not found!');
     }
   )(req, res, next);
 });
 
-router.get('/facebook', auth.optional, (req, res, next) => {
-  return passport.authenticate('facebook');
-});
+router.get('/facebook', passport.authenticate('facebook'));
 
-router.get('facebook/callback', auth.optional, (req, res, next) => {
-  passport.authenticate('facebook', {
+router.get('/facebook/callback', passport.authenticate('facebook', {
     successRedirect: '/',
     failureRedirect: '/login'
-  });
-});
+}));
 
 // GET current route (required, only authenticated users have access)
 router.get('/current', auth.required, (req, res, next) => {

@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { FormInput } from 'src/app/shared/models';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { ApiService } from 'src/app/services/api.service';
 
 
 @Component({
@@ -21,7 +22,10 @@ export class AuthFormComponent implements OnInit {
   @Input() formInputs: Array<FormInput> = [];
   authForm: FormGroup = null;
 
-  constructor(private formBuilder: FormBuilder) { }
+  constructor(
+    private apiService: ApiService,
+    private formBuilder: FormBuilder
+  ) { }
 
   ngOnInit() {
     const authFormGroup = this.formInputs.reduce((acc, formInput) => {
@@ -36,5 +40,9 @@ export class AuthFormComponent implements OnInit {
 
   submitForm() {
     this.formEmitter.next(this.authForm.value);
+  }
+
+  facebookLogin() {
+    this.apiService.facebookLogin();
   }
 }

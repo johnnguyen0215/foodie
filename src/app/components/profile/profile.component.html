@@ -1,7 +1,13 @@
 <div class="profile-page">
+  <h1 class="edit-profile-heading">Edit Profile</h1>
   <div class="profile-picture">
     <img src="profilePicture" />
   </div>
-  <div class="set-profile-picture" *ngIf="profilePicUrl; else changeProfilePic"></div>
+  <div class="set-profile-picture" *ngIf="profilePicUrl; else changeProfilePic">
+    <form
+    >
+      <input type="image" name="imageupload" value="imageupload"/>
+    </form>
+  </div>
   <div #changeProfilePic class="set-profile-picture"></div>
 </div>

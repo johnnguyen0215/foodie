@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -34,7 +34,7 @@ export class ApiService {
       },
     };
 
-    return this.http.post(this.userEndpoint, payload);
+    return this.http.post(`${this.userEndpoint}/login`, payload);
   }
 
   fetchProfile(email) {
@@ -43,6 +43,16 @@ export class ApiService {
     };
 
     return this.http.get(this.userEndpoint);
+  }
+
+  facebookLogin() {
+    return this.http.get(this.facebookEndpoint).subscribe((stuff) => {
+      console.log(stuff);
+    });
+  }
+
+  get facebookEndpoint() {
+    return `${this.userEndpoint}/facebook`;
   }
 
   get userEndpoint() {

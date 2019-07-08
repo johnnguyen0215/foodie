@@ -1,5 +1,6 @@
 import express = require('express');
 import path = require('path');
+import passport = require('passport');
 import bodyParser = require('body-parser');
 import session = require('express-session');
 import cors = require('cors');
@@ -38,9 +39,12 @@ mongoose.connect('mongodb+srv://john-nguyen:august18@foodie-cluster-sex1j' +
 mongoose.set('debug', true);
 
 import './models/User';
-import './config/passport';
+import './config/passport.ts';
 import routes from './routes';
 import { environment } from 'src/environments/environment';
+
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(routes);
 
 // Error handlers & middlewares
