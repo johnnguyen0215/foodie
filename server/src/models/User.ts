@@ -16,6 +16,14 @@ export const UserSchema: Schema = new Schema({
   createdAt: Date,
   name: String,
   email: String,
+  facebook: {
+    id: String,
+    picture: String,
+  },
+  google: {
+    id: String,
+    picture: String,
+  },
   hash: String,
   salt: String,
 });

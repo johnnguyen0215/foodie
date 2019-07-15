@@ -22,9 +22,10 @@
       </div>
     </div>
     <div fxLayout="column" class="auth-media-buttons">
-      <button
+      <a
+        type="button"
         mat-raised-button class="facebook-button"
-        (click)="facebookLogin()"
+        href={{apiService.facebookEndpoint}}
       >
         <img
           src="assets/svg/facebook.svg"
@@ -32,15 +33,20 @@
           height="30px"
         >
         Login with facebook
-      </button>
-      <button mat-raised-button color="accent">
+      </a>
+      <a
+        color="accent"
+        type="button"
+        mat-raised-button
+        href={{apiService.googleEndpoint}}
+      >
         <img
           src="assets/svg/google-plus.svg"
           width="30px"
           height="30px"
         >
         Login with Google+
-      </button>
+      </a>
     </div>
   </form>
   <button mat-raised-button class="submit-button" (click)="submitForm()">

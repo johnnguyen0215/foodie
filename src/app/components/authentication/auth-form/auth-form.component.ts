@@ -23,7 +23,7 @@ export class AuthFormComponent implements OnInit {
   authForm: FormGroup = null;
 
   constructor(
-    private apiService: ApiService,
+    public apiService: ApiService,
     private formBuilder: FormBuilder
   ) { }
 
@@ -40,9 +40,5 @@ export class AuthFormComponent implements OnInit {
 
   submitForm() {
     this.formEmitter.next(this.authForm.value);
-  }
-
-  facebookLogin() {
-    this.apiService.facebookLogin();
   }
 }

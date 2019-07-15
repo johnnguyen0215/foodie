@@ -8,8 +8,10 @@ const User: Model<IUserModel> = model('User');
 
 const router = express.Router();
 
+const FRONTEND_URL = 'http://localhost:4200';
+
 // POST new user route
-router.post('/', auth.optional, (req, res, next) => {
+router.post('/register', auth.optional, (req, res, next) => {
   const {
     body: {
       user
@@ -79,11 +81,7 @@ router.post('/login', auth.optional, (req, res, next) => {
     'local',
     { session: false },
     (err, passportUser: IUserModel, info) => {
-      console.log(passportUser);
-
       if (err) {
-        console.log('error');
-
         return next(err);
       }
 
@@ -99,12 +97,38 @@ router.post('/login', auth.optional, (req, res, next) => {
   )(req, res, next);
 });
 
-router.get('/facebook', passport.authenticate('facebook'));
+router.get('/auth/facebook', passport.authenticate('facebook'));
 
-router.get('/facebook/callback', passport.authenticate('facebook', {
-    successRedirect: '/',
-    failureRedirect: '/login'
+router.get('/auth/facebook/callback', passport.authenticate('facebook', {
+  successRedirect: '/api/users/auth',
+  failureRedirect: '/api/users/login'
 }));
+
+router.get('/auth/google', passport.authenticate('google', {
+  scope: ['https://www.googleapis.com/auth/userinfo.profile']
+}));
+
+router.get('/auth/google/callback', passport.authenticate('google', {
+  successRedirect: '/api/users/auth',
+  failureRedirect: '/api/users/login',
+}));
+
+router.get('/auth', auth.optional, (req, res, next) => {
+  const {
+    user,
+  } = req;
+
+  if (!user) {
+    return res.status(400).send('User not found!');
+  }
+
+  const userObject = new User(user);
+  const token = user.generateJWT();
+
+  const redirectUrl = `${FRONTEND_URL}/home?token=${token}`;
+
+  res.redirect(redirectUrl);
+});
 
 // GET current route (required, only authenticated users have access)
 router.get('/current', auth.required, (req, res, next) => {
@@ -123,7 +147,5 @@ router.get('/current', auth.required, (req, res, next) => {
       return res.json({ user: user.toAuthJSON() });
     });
 });
-
-
 
 export default router;

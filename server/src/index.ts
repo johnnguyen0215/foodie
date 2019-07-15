@@ -35,8 +35,9 @@ if (!isProduction) {
 
 // Configure Mongoose
 mongoose.connect('mongodb+srv://john-nguyen:august18@foodie-cluster-sex1j' +
-'.mongodb.net/test?retryWrites=true');
+'.mongodb.net/test?retryWrites=true', { useNewUrlParser: true });
 mongoose.set('debug', true);
+mongoose.set('useFindAndModify', false);
 
 import './models/User';
 import './config/passport.ts';

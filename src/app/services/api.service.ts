@@ -23,7 +23,7 @@ export class ApiService {
       },
     };
 
-    return this.http.post(this.userEndpoint, payload);
+    return this.http.post(`${this.userEndpoint}/register`, payload);
   }
 
   login (email: string, password: string) {
@@ -45,17 +45,16 @@ export class ApiService {
     return this.http.get(this.userEndpoint);
   }
 
-  facebookLogin() {
-    return this.http.get(this.facebookEndpoint).subscribe((stuff) => {
-      console.log(stuff);
-    });
+  get facebookEndpoint() {
+    return `${this.userEndpoint}/auth/facebook`;
   }
 
-  get facebookEndpoint() {
-    return `${this.userEndpoint}/facebook`;
+  get googleEndpoint() {
+    return `${this.userEndpoint}/auth/google`;
   }
+
 
   get userEndpoint() {
-    return `${this.apiUrl}/user`;
+    return `${this.apiUrl}/users`;
   }
 }

@@ -7,6 +7,14 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "Node typescript",
+      "program": "${workspaceFolder}/server/index.ts",
+      "preLaunchTask": "tsc: build - ${workspaceFolder}\\server\\tsconfig.node.json",
+      "outFiles": ["${workspaceFolder}/dist/server/*.js"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "App",
       "runtimeExecutable": "${env:HOME}/.nvm/versions/node/v10.16.0/bin/node"
     },
@@ -35,7 +43,7 @@
       "port": 9229,
       "address": "localhost",
       "localRoot": "${workspaceFolder}/server/src",
-      "remoteRoot": "${command:extension.vscode-wsl-workspaceFolder}/server/src"
+      "remoteRoot": "${command:extension.vscode-wsl-workspaceFolder}/server/src",
     }
   ]
 }
