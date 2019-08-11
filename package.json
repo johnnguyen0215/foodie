@@ -9,7 +9,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "serve": "SET NODE_ENV=dev & node --inspect=9229 -r ts-node/register ./server/src/index.ts",
+    "serve": "node --inspect=9229 -r ts-node/register ./server/src/index.ts",
     "serve:watch": "nodemon"
   },
   "private": true,

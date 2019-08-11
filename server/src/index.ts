@@ -45,7 +45,6 @@ import routes from './routes';
 import { environment } from 'src/environments/environment';
 
 app.use(passport.initialize());
-app.use(passport.session());
 app.use(routes);
 
 // Error handlers & middlewares
@@ -73,13 +72,14 @@ app.use((err, req, res, next) => {
   });
 });
 
-if (!isProduction) {
+if (isProduction) {
   https.createServer({
     key: fs.readFileSync('server.key'),
     cert: fs.readFileSync('server.cert'),
   }, app)
   .listen(8000, () => console.log('Server running on https://localhost:8000/'));
 } else {
+  app.use(passport.session());
   app.listen(8000, () => {
     console.log('Server running on http://localhost:8000/');
   });

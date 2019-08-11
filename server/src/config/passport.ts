@@ -10,8 +10,6 @@ const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 const User = model('User');
 
-const GOOGLE_PROFILE_URL = 'https://www.googleapis.com/plus/v1/people';
-
 passport.use(new LocalStrategy({
   usernameField: 'user[email]',
   passwordField: 'user[password]',
@@ -52,12 +50,7 @@ async (email, password, done) => {
   return done();
 }));
 
-passport.use(new FacebookStrategy({
-  clientID: authConfig.facebookAuth.clientID,
-  clientSecret: authConfig.facebookAuth.clientSecret,
-  callbackURL: authConfig.facebookAuth.callbackURL,
-},
-async (accessToken, refreshToken, profile, done) => {
+const socialMediaStrategy = async (profile, done, type, pictureUrl) => {
   try {
     let fullName = profile.displayName;
 
@@ -65,36 +58,24 @@ async (accessToken, refreshToken, profile, done) => {
       fullName = `${profile.name.givenName} ${profile.name.familyName}`;
     }
 
-    const user = await User.findOneAndUpdate(
-      {
-        facebookId: profile.facebook.id
-      },
-      {
-        $set: {
-          email: profile._json.email,
-          name: fullName,
-          facebook: {
-            id: profile.id,
-            picture: `https://graph.facebook.com/${profile.id}` +
-            `/picture?type=large`
-          }
-        }
-      },
-      {
-        upsert: true,
-      }
-    );
+    const idKey = `${type}.id`;
+    const pictureKey = `${type}.picture`;
+
+    const user = await User.findOne({
+      [idKey]: profile.id
+    });
 
     if (!user) {
-      return done(
-        null,
-        false,
-        {
-          errors: {
-            'unknown-error': 'There was a problem accessing your account.'
-          }
-        }
-      );
+      const newUser = new User({
+        email: profile._json.email,
+        name: fullName,
+        [idKey]: profile.id,
+        [pictureKey]: pictureUrl,
+      });
+
+      newUser.save((saveError) => {
+        return done(saveError, newUser);
+      });
     }
 
     return done(null, user);
@@ -110,6 +91,30 @@ async (accessToken, refreshToken, profile, done) => {
       }
     );
   }
+};
+
+passport.use(new FacebookStrategy({
+  clientID: authConfig.facebookAuth.clientID,
+  clientSecret: authConfig.facebookAuth.clientSecret,
+  callbackURL: authConfig.facebookAuth.callbackURL,
+},
+(accessToken, refreshToken, profile, done) => {
+  if (profile) {
+    const pictureUrl = `https://graph.facebook.com/${profile.id}` +
+    `/picture?type=large`;
+
+    return socialMediaStrategy(profile, done, 'facebook', pictureUrl);
+  }
+
+  return done(
+    null,
+    false,
+    {
+      errors: {
+        'profile-error': 'No profile was found for this facebook account',
+      }
+    }
+  );
 }));
 
 passport.use(new GoogleStrategy({
@@ -117,65 +122,22 @@ passport.use(new GoogleStrategy({
   clientSecret: authConfig.googleAuth.clientSecret,
   callbackURL: authConfig.googleAuth.callbackURL,
 },
-async (token, refreshToken, profile, done) => {
-  try {
-    let fullName = profile.displayName;
+(token, refreshToken, profile, done) => {
+  if (profile) {
+    const pictureUrl = profile._json.picture;
 
-    if (profile.name && profile.name.givenName) {
-      fullName = `${profile.name.givenName} ${profile.name.familyName}`;
-    }
-
-    const googlePictureReq = await request(
-      `${GOOGLE_PROFILE_URL}/${profile.id}` +
-      `?fields=image&key=${authConfig.googleAuth.apiKey}`
-    );
-
-    const googlePicture = googlePictureReq && googlePictureReq.image.url;
-
-    const user = await User.findOneAndUpdate(
-      {
-        googleId: profile.google.id,
-      },
-      {
-        $set: {
-          email: profile._json.email,
-          name: fullName,
-          google: {
-            id: profile.id,
-            picture: googlePicture,
-          }
-        }
-      },
-      {
-        upsert: true,
-      }
-    );
-
-    if (!user) {
-      return done(
-        null,
-        false,
-        {
-          errors: {
-            'unknown-error': 'There was a problem accessing your account.'
-          }
-        }
-      );
-    }
-
-    return done(null, user);
-  } catch (e) {
-    return done(
-      null,
-      false,
-      {
-        errors: {
-          'uknown-error': `There was an issue finding or creating the` +
-          ` user record. ${e}`,
-        }
-      }
-    );
+    return socialMediaStrategy(profile, done, 'google', pictureUrl);
   }
+
+  return done(
+    null,
+    false,
+    {
+      errors: {
+        'profile-error': 'No profile was found for this google account',
+      }
+    }
+  );
 }));
 
 passport.serializeUser((user, done) => {

@@ -3,6 +3,7 @@ import passport = require('passport');
 import express = require('express');
 import auth from '../auth';
 import { IUserModel } from '../../models/User';
+import { IUserAuthRequest } from '../../interfaces/userAuthRequest';
 
 const User: Model<IUserModel> = model('User');
 
@@ -11,7 +12,7 @@ const router = express.Router();
 const FRONTEND_URL = 'http://localhost:4200';
 
 // POST new user route
-router.post('/register', auth.optional, (req, res, next) => {
+router.post('/register', auth.optional, async (req, res, next) => {
   const {
     body: {
       user
@@ -40,6 +41,14 @@ router.post('/register', auth.optional, (req, res, next) => {
         password: 'is required',
       }
     });
+  }
+
+  const userExists = await User.findOne({
+    email: user.email,
+  });
+
+  if (userExists) {
+    return res.status(422).send('User already exists');
   }
 
   const finalUser = new User(user);
@@ -101,7 +110,7 @@ router.get('/auth/facebook', passport.authenticate('facebook'));
 
 router.get('/auth/facebook/callback', passport.authenticate('facebook', {
   successRedirect: '/api/users/auth',
-  failureRedirect: '/api/users/login'
+  failureRedirect: '/api/users/auth/fail'
 }));
 
 router.get('/auth/google', passport.authenticate('google', {
@@ -110,7 +119,7 @@ router.get('/auth/google', passport.authenticate('google', {
 
 router.get('/auth/google/callback', passport.authenticate('google', {
   successRedirect: '/api/users/auth',
-  failureRedirect: '/api/users/login',
+  failureRedirect: '/api/users/auth/fail',
 }));
 
 router.get('/auth', auth.optional, (req, res, next) => {
@@ -122,7 +131,6 @@ router.get('/auth', auth.optional, (req, res, next) => {
     return res.status(400).send('User not found!');
   }
 
-  const userObject = new User(user);
   const token = user.generateJWT();
 
   const redirectUrl = `${FRONTEND_URL}/home?token=${token}`;
@@ -130,15 +138,14 @@ router.get('/auth', auth.optional, (req, res, next) => {
   res.redirect(redirectUrl);
 });
 
-// GET current route (required, only authenticated users have access)
-router.get('/current', auth.required, (req, res, next) => {
-  const {
-    payload: {
-      id
-    }
-  } = req;
+router.get('/auth/fail', auth.optional, (req, res, next) => {
+  return res.status(400).send(`There was a failure logging ` +
+  `into your social media account`);
+});
 
-  return User.findById(id)
+// GET current route (required, only authenticated users have access)
+router.get('/current', auth.required, (req: IUserAuthRequest, res, next) => {
+  return User.findById(req.payload.id)
     .then((user) => {
       if (!user) {
         return res.sendStatus(400);
