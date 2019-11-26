@@ -1,8 +1,10 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormInput } from '../../../shared/models';
-import { FormBuilder } from '@angular/forms';
 import { ApiService } from '../../../services/api.service';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import { ApiError } from '../../../shared/models';
+
 
 @Component({
   selector: 'app-register',
@@ -12,11 +14,13 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 })
 export class RegisterComponent implements OnInit {
   constructor(
-    private formBuilder: FormBuilder,
     private apiService: ApiService,
     private router: Router,
-    private route: ActivatedRoute,
-  ) { }
+    private toastrService: ToastrService,
+  ) {
+      this.toastrService.toastrConfig.tapToDismiss = true;
+      this.toastrService.toastrConfig.disableTimeOut = true;
+   }
 
   formInputs: Array<FormInput> = [
     {
@@ -45,16 +49,21 @@ export class RegisterComponent implements OnInit {
   }
 
 
-  register(event) {
+  register(event: any) {
     const {
       name,
       email,
       password
     } = event;
 
+    this.toastrService.clear();
+
     this.apiService.signUp(name, email, password).subscribe(
-      (data) => {
+      () => {
         this.router.navigate(['/home']);
+      },
+      (apiError: ApiError) => {
+        this.toastrService.error(apiError.error);
       }
     );
   }

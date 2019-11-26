@@ -1,8 +1,6 @@
-import { Model, model } from 'mongoose';
+import { model } from 'mongoose';
 import passport = require('passport');
-import { IUserModel } from '../models/User';
 import authConfig from './auth';
-import request = require('request');
 
 const FacebookStrategy = require('passport-facebook').Strategy;
 const LocalStrategy = require('passport-local').Strategy;

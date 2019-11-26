@@ -2,16 +2,16 @@ import { Model, model } from 'mongoose';
 import passport = require('passport');
 import express = require('express');
 import auth from '../auth';
-import { IUserModel } from '../../models/User';
+import { IUserModel, UserSchema } from '../../models/User';
 import { IUserAuthRequest } from '../../interfaces/userAuthRequest';
+import Joi = require('@hapi/joi');
 
 const User: Model<IUserModel> = model('User');
 
 const router = express.Router();
 
-const FRONTEND_URL = 'http://localhost:4200';
+const FRONTEND_URL = 'https://localhost:4200';
 
-// POST new user route
 router.post('/register', auth.optional, async (req, res, next) => {
   const {
     body: {
@@ -19,28 +19,32 @@ router.post('/register', auth.optional, async (req, res, next) => {
     }
   } = req;
 
-  if (!user.name) {
-    return res.status(422).json({
-      errors: {
-        name: 'is required',
-      }
-    });
-  }
+  const userValidationSchema = Joi.object().keys({
+    name: Joi.string().min(1).max(30).required(),
+    password: Joi.string().regex(/^[a-zA-Z0-9]{6,30}$/).required(),
+    email: Joi.string().email().required()
+  });
 
-  if (!user.email) {
-    return res.status(422).json({
-      errors: {
-        email: 'is required',
-      }
-    });
-  }
+  try {
+    await Joi.validate(user, userValidationSchema, { abortEarly: false});
+  } catch (err) {
+    console.log(err);
 
-  if (!user.password) {
-    return res.status(422).json({
-      errors: {
-        password: 'is required',
+    if (err) {
+      switch (err.details[0].context.key) {
+        case 'password':
+          return res.status(400).send(`The password provided must be
+          alphanumeric and 6-30 characters long.`);
+        case 'email':
+          return res.status(400).send('The email provided is not valid.');
+        case 'name':
+          return res.status(400).send('A name must be provided.');
+        default:
+          return res.status(400).send('An unknown error occurred.');
       }
-    });
+    } else {
+      return res.status(400).send('An unknown error occurred.');
+    }
   }
 
   const userExists = await User.findOne({
@@ -48,7 +52,7 @@ router.post('/register', auth.optional, async (req, res, next) => {
   });
 
   if (userExists) {
-    return res.status(422).send('User already exists');
+    return res.status(409).send('User already exists.');
   }
 
   const finalUser = new User(user);
@@ -63,27 +67,26 @@ router.post('/register', auth.optional, async (req, res, next) => {
     });
 });
 
-router.post('/login', auth.optional, (req, res, next) => {
+router.post('/login', auth.optional, async (req, res, next) => {
   const {
     body: {
       user,
     },
   } = req;
 
-  if (!user.email) {
-    return res.status(422).json({
-      errors: {
-        email: 'is required',
-      }
-    });
-  }
+  const userValidationSchema = Joi.object().keys({
+    password: Joi.string().regex(/^[a-zA-Z0-9]{3,30}$/).required(),
+    email: Joi.string().email().required()
+  });
 
-  if (!user.password) {
-    return res.status(422).json({
-      errors: {
-        password: 'is required',
-      }
-    });
+  try {
+    await userValidationSchema.validate(user);
+  } catch (err) {
+    if (err) {
+      return res.status(400).send(err.details[0].message);
+    } else {
+      return res.status(400).send('An unknown error occurred.');
+    }
   }
 
   return passport.authenticate(
@@ -101,9 +104,21 @@ router.post('/login', auth.optional, (req, res, next) => {
         return res.json({ user: userObject.toAuthJSON() });
       }
 
-      return res.status(400).send('User not found!');
+      return res.status(400).send('User not found.');
     }
   )(req, res, next);
+});
+
+// GET current route (required, only authenticated users have access)
+router.get('/current', auth.required, (req: IUserAuthRequest, res, next) => {
+  return User.findById(req.payload.id)
+    .then((user) => {
+      if (!user) {
+        return res.status(400).send('User not found.');
+      }
+
+      return res.json({ user: user.toAuthJSON() });
+    });
 });
 
 router.get('/auth/facebook', passport.authenticate('facebook'));
@@ -128,7 +143,7 @@ router.get('/auth', auth.optional, (req, res, next) => {
   } = req;
 
   if (!user) {
-    return res.status(400).send('User not found!');
+    return res.status(400).send('User not found.');
   }
 
   const token = user.generateJWT();
@@ -141,18 +156,6 @@ router.get('/auth', auth.optional, (req, res, next) => {
 router.get('/auth/fail', auth.optional, (req, res, next) => {
   return res.status(400).send(`There was a failure logging ` +
   `into your social media account`);
-});
-
-// GET current route (required, only authenticated users have access)
-router.get('/current', auth.required, (req: IUserAuthRequest, res, next) => {
-  return User.findById(req.payload.id)
-    .then((user) => {
-      if (!user) {
-        return res.sendStatus(400);
-      }
-
-      return res.json({ user: user.toAuthJSON() });
-    });
 });
 
 export default router;

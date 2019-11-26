@@ -12,8 +12,7 @@ export class ApiService {
   ) { }
 
   // TODO: Figure out production environment url.
-  apiUrl: string = environment.production
-    ? 'https://localhost:8000/api' : 'http://localhost:8000/api';
+  apiUrl = 'https://localhost:8000/api';
 
   signUp (name: string, email: string, password: string) {
     console.log(this.apiUrl);
@@ -54,7 +53,6 @@ export class ApiService {
   get googleEndpoint() {
     return `${this.userEndpoint}/auth/google`;
   }
-
 
   get userEndpoint() {
     return `${this.apiUrl}/users`;
